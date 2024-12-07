@@ -1,7 +1,7 @@
 services:
 
   teable:
-    image: ghcr.io/teableio/teable-ee:latest
+    image: ghcr.io/teableio/teable:latest
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -10,18 +10,11 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=Europe/Madrid
       - NEXT_ENV_IMAGES_ALL_REMOTE=true
     depends_on:
       teable-db-migrate:
         condition: service_completed_successfully
-      teable-cache:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
-      start_period: 5s
-      interval: 5s
-      timeout: 3s
-      retries: 3        
 
   teable-db:
     image: postgres:15.4
@@ -31,6 +24,7 @@ services:
     volumes:
       - ./teable-db:/var/lib/postgresql/data:rw
     environment:
+      - TZ=Europe/Madrid
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -38,27 +32,17 @@ services:
       test: ['CMD-SHELL', "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
       interval: 10s
       timeout: 3s
-      retries: 3      
+      retries: 3
 
   teable-db-migrate:
-    image: ghcr.io/teableio/teable-db-migrate-ee:latest
+    image: ghcr.io/teableio/teable-db-migrate:latest
     environment:
+      - TZ=Europe/Madrid
       - PRISMA_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
       teable-db:
-        condition: service_healthy      
+        condition: service_healthy
 
-  teable-cache:
-    image: redis:7.2.4
-    restart: unless-stopped
-    expose:
-      - '6379'
-    volumes:
-      - ./teable-cache:/data:rw
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
-    healthcheck:
-      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
-      interval: 10s
-      timeout: 3s
-      retries: 3    
+
+    
 
