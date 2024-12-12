@@ -2,6 +2,7 @@ services:
 
   teable:
     image: ghcr.io/teableio/teable:latest
+    container_name: teable
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -17,7 +18,8 @@ services:
         condition: service_completed_successfully
 
   teable-db:
-    image: postgres:15.4
+    image: postgres:16
+    container_name: teable-db
     restart: unless-stopped
     ports:
       - '42345:5432'
@@ -36,6 +38,7 @@ services:
 
   teable-db-migrate:
     image: ghcr.io/teableio/teable-db-migrate:latest
+    container_name: teable-migrate
     environment:
       - TZ=Europe/Madrid
       - PRISMA_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
