@@ -12,7 +12,7 @@ services:
     environment:
       - TZ=${TIMEZONE}
     networks:
-      - teable-standalone
+      - teable
     depends_on:
       teable-db:
         condition: service_healthy
@@ -32,7 +32,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
-      - teable-standalone
+      - teable
     healthcheck:
       test: ['CMD-SHELL', "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
       interval: 10s
@@ -47,7 +47,7 @@ services:
     volumes:
       - teable-cache:/data:rw
     networks:
-      - teable-standalone
+      - teable
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     healthcheck:
       test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
@@ -57,7 +57,7 @@ services:
 
 networks:
   teable-standalone:
-    name: teable-standalone-network
+    name: teable-network
     driver: bridge
 
 volumes:
