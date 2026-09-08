@@ -2,6 +2,7 @@ services:
 
   teable:
     image: ghcr.io/teableio/teable:latest
+    container_name: teable
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -21,6 +22,7 @@ services:
 
   teable-db:
     image: postgres:15.4
+    container_name: teable-db
     restart: unless-stopped
     ports:
       - '42345:5432'
@@ -41,6 +43,7 @@ services:
       
   teable-cache:
     image: redis:7.2.4
+    container_name: teable-cache
     restart: unless-stopped
     expose:
       - '6379'
