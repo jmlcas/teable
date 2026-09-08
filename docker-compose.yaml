@@ -40,7 +40,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-      
+
   teable-cache:
     image: redis:7.2.4
     container_name: teable-cache
@@ -59,11 +59,11 @@ services:
       retries: 3
 
 networks:
-  teable-standalone:
+  teable:
     name: teable-network
     driver: bridge
 
 volumes:
   teable-data: {}
-  teable-db: {} 
+  teable-db: {}
   teable-cache: {}
